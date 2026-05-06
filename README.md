@@ -1,5 +1,4 @@
 # turinglab-elmasasya
-# Adın Soyadın — TuringLab
 
 ## Proje Hakkında
 TuringLab, Hesaplama Kuramı dersi final ödevi kapsamında geliştirilen,
