@@ -15,6 +15,9 @@ class Configuration:
 
 @dataclass
 class RunResult:
+    """
+    Stores the result of a TM execution.
+    """
     accepted: bool
     reason: str
     final_tape: str
@@ -23,6 +26,10 @@ class RunResult:
 
 
 class Tape:
+    """
+    Represents the tape of a single-tape Turing Machine.
+    Supports reading and writing symbols at arbitrary positions.
+    """
     def __init__(self, input_string: str = "", blank_symbol: str = "B"):
         self.blank_symbol = blank_symbol
         self.tape: Dict[int, str] = {}
@@ -66,6 +73,10 @@ class Tape:
 
 
 class SingleTapeTM:
+    """
+    Deterministic single-tape Turing Machine simulator.
+    Loads machine definitions from YAML files and executes them.
+    """
     def __init__(
         self,
         name: str,

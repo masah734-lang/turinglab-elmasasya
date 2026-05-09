@@ -84,3 +84,54 @@ def test_verbose_output(capsys):
     assert "Adım" in captured.out
     assert "Durum" in captured.out
     assert "Şerit" in captured.out
+
+def test_empty_input():
+    tape = Tape("")
+    assert tape.read(0) == "B"
+
+
+def test_write_blank_symbol():
+    tape = Tape("1")
+    tape.write(0, "B")
+
+    assert tape.read(0) == "B"
+
+
+def test_tape_display():
+    tape = Tape("101")
+
+    display = tape.get_display(1)
+
+    assert "[0]" in display
+
+def test_missing_yaml_fields():
+    with pytest.raises(ValueError):
+        SingleTapeTM.from_yaml("machines/invalid_machine.yaml")
+
+def test_required_python_api():
+    from turinglab import SingleTapeTM, RunResult
+
+    tm = SingleTapeTM.from_yaml("machines/binary_increment.yaml")
+
+    result: RunResult = tm.run(
+        input_string="1011",
+        max_steps=1000,
+        verbose=False
+    )
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "1100"
+    assert isinstance(result.steps, int)
+    assert len(result.history) > 0
+
+    config = result.history[5]
+    assert hasattr(config, "state")
+    assert hasattr(config, "tape")
+    assert hasattr(config, "head_position")
+
+def test_no_transition():
+    tm = SingleTapeTM.from_yaml("machines/binary_increment.yaml")
+    result = tm.run("2", max_steps=1000)
+
+    assert result.accepted is False
+    assert result.reason == "no_transition"
