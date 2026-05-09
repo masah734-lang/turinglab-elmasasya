@@ -135,3 +135,67 @@ def test_no_transition():
 
     assert result.accepted is False
     assert result.reason == "no_transition"
+
+
+#tests for the unary increment machines
+def test_unary_increment_1():
+    tm = SingleTapeTM.from_yaml("machines/unary_increment.yaml")
+
+    result = tm.run("1")
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "11"
+
+
+def test_unary_increment_111():
+    tm = SingleTapeTM.from_yaml("machines/unary_increment.yaml")
+
+    result = tm.run("111")
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "1111"
+
+
+def test_unary_increment_empty():
+    tm = SingleTapeTM.from_yaml("machines/unary_increment.yaml")
+
+    result = tm.run("")
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "1"
+
+
+
+# Tests for the even 'a' machine
+def test_even_a_accept():
+    tm = SingleTapeTM.from_yaml("machines/even_a.yaml")
+
+    result = tm.run("aa")
+
+    assert result.accepted is True
+
+
+def test_even_a_accept_4():
+    tm = SingleTapeTM.from_yaml("machines/even_a.yaml")
+
+    result = tm.run("aaaa")
+
+    assert result.accepted is True
+
+
+def test_even_a_reject():
+    tm = SingleTapeTM.from_yaml("machines/even_a.yaml")
+
+    result = tm.run("a")
+
+    assert result.accepted is False
+    assert result.reason == "no_transition"
+
+
+def test_even_a_reject_3():
+    tm = SingleTapeTM.from_yaml("machines/even_a.yaml")
+
+    result = tm.run("aaa")
+
+    assert result.accepted is False
+    assert result.reason == "no_transition"
