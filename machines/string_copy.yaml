@@ -1,0 +1,86 @@
+#b karakteri geçici olarak C ile işaretlenmiştir çünkü B  blank sembolü olarak kullanılmıştır. Kopyalanmamış a'lar A ile işaretlenir.
+
+name: "string_copy"
+description: "a/b dizgisini kopyalar. Örnek: abba -> abba#abba"
+
+states:
+  - q_init
+  - q_return_start
+  - q_find
+  - q_go_end_a
+  - q_go_end_b
+  - q_back
+  - q_cleanup
+  - q_accept
+
+input_alphabet: ["a", "b"]
+
+tape_alphabet: ["a", "b", "A", "C", "#", "B"]
+
+blank: "B"
+
+start_state: q_init
+
+accept_states: [q_accept]
+
+reject_states: []
+
+transitions:
+  # 1) Girdinin sonuna git
+  - {state: q_init, read: "a", next: q_init, write: "a", move: R}
+  - {state: q_init, read: "b", next: q_init, write: "b", move: R}
+
+  # 2) Sonuna # koy
+  - {state: q_init, read: "B", next: q_return_start, write: "#", move: L}
+
+  # 3) Başa dön
+  - {state: q_return_start, read: "a", next: q_return_start, write: "a", move: L}
+  - {state: q_return_start, read: "b", next: q_return_start, write: "b", move: L}
+  - {state: q_return_start, read: "A", next: q_return_start, write: "A", move: L}
+  - {state: q_return_start, read: "C", next: q_return_start, write: "C", move: L}
+  - {state: q_return_start, read: "#", next: q_return_start, write: "#", move: L}
+  - {state: q_return_start, read: "B", next: q_find, write: "B", move: R}
+
+  # 4) Kopyalanmamış karakter ara
+  - {state: q_find, read: "A", next: q_find, write: "A", move: R}
+  - {state: q_find, read: "C", next: q_find, write: "C", move: R}
+
+  # a bulunursa A yap, sona a eklemeye git
+  - {state: q_find, read: "a", next: q_go_end_a, write: "A", move: R}
+
+  # b bulunursa C yap, sona b eklemeye git
+  - {state: q_find, read: "b", next: q_go_end_b, write: "C", move: R}
+
+  # # görülürse tüm karakterler kopyalanmıştır, temizliğe başla
+  - {state: q_find, read: "#", next: q_cleanup, write: "#", move: L}
+
+  # 5) Sona git ve a ekle
+  - {state: q_go_end_a, read: "a", next: q_go_end_a, write: "a", move: R}
+  - {state: q_go_end_a, read: "b", next: q_go_end_a, write: "b", move: R}
+  - {state: q_go_end_a, read: "A", next: q_go_end_a, write: "A", move: R}
+  - {state: q_go_end_a, read: "C", next: q_go_end_a, write: "C", move: R}
+  - {state: q_go_end_a, read: "#", next: q_go_end_a, write: "#", move: R}
+  - {state: q_go_end_a, read: "B", next: q_back, write: "a", move: L}
+
+  # 6) Sona git ve b ekle
+  - {state: q_go_end_b, read: "a", next: q_go_end_b, write: "a", move: R}
+  - {state: q_go_end_b, read: "b", next: q_go_end_b, write: "b", move: R}
+  - {state: q_go_end_b, read: "A", next: q_go_end_b, write: "A", move: R}
+  - {state: q_go_end_b, read: "C", next: q_go_end_b, write: "C", move: R}
+  - {state: q_go_end_b, read: "#", next: q_go_end_b, write: "#", move: R}
+  - {state: q_go_end_b, read: "B", next: q_back, write: "b", move: L}
+
+  # 7) Tekrar başa dön
+  - {state: q_back, read: "a", next: q_back, write: "a", move: L}
+  - {state: q_back, read: "b", next: q_back, write: "b", move: L}
+  - {state: q_back, read: "A", next: q_back, write: "A", move: L}
+  - {state: q_back, read: "C", next: q_back, write: "C", move: L}
+  - {state: q_back, read: "#", next: q_back, write: "#", move: L}
+  - {state: q_back, read: "B", next: q_find, write: "B", move: R}
+
+  # 8) Temizlik: A -> a, C -> b
+  - {state: q_cleanup, read: "A", next: q_cleanup, write: "a", move: L}
+  - {state: q_cleanup, read: "C", next: q_cleanup, write: "b", move: L}
+  - {state: q_cleanup, read: "a", next: q_cleanup, write: "a", move: L}
+  - {state: q_cleanup, read: "b", next: q_cleanup, write: "b", move: L}
+  - {state: q_cleanup, read: "B", next: q_accept, write: "B", move: R}

@@ -1,0 +1,57 @@
+name: "divisible_by_4"
+description: "Binary girdinin 4'e bölünüp bölünmediğini kontrol eder."
+
+states:
+  - q_start
+  - q_seen_one_bit
+  - q_last_00
+  - q_last_01
+  - q_last_10
+  - q_last_11
+  - q_accept
+  - q_reject
+
+input_alphabet: ["0", "1"]
+
+tape_alphabet: ["0", "1", "B"]
+
+blank: "B"
+
+start_state: q_start
+
+accept_states: [q_accept]
+
+reject_states: [q_reject]
+
+transitions:
+  # İlk bit okunur
+  - {state: q_start, read: "0", next: q_seen_one_bit, write: "0", move: R}
+  - {state: q_start, read: "1", next: q_seen_one_bit, write: "1", move: R}
+  - {state: q_start, read: "B", next: q_reject, write: "B", move: S}
+
+  # Sadece 1 bit varsa 4'e bölünmez
+  - {state: q_seen_one_bit, read: "B", next: q_reject, write: "B", move: S}
+
+  # İkinci bit ile son iki bit takibi başlar
+  - {state: q_seen_one_bit, read: "0", next: q_last_00, write: "0", move: R}
+  - {state: q_seen_one_bit, read: "1", next: q_last_01, write: "1", move: R}
+
+  # Son iki bit 00 iken yeni bit gelirse kaydır
+  - {state: q_last_00, read: "0", next: q_last_00, write: "0", move: R}
+  - {state: q_last_00, read: "1", next: q_last_01, write: "1", move: R}
+  - {state: q_last_00, read: "B", next: q_accept, write: "B", move: S}
+
+  # Son iki bit 01
+  - {state: q_last_01, read: "0", next: q_last_10, write: "0", move: R}
+  - {state: q_last_01, read: "1", next: q_last_11, write: "1", move: R}
+  - {state: q_last_01, read: "B", next: q_reject, write: "B", move: S}
+
+  # Son iki bit 10
+  - {state: q_last_10, read: "0", next: q_last_00, write: "0", move: R}
+  - {state: q_last_10, read: "1", next: q_last_01, write: "1", move: R}
+  - {state: q_last_10, read: "B", next: q_reject, write: "B", move: S}
+
+  # Son iki bit 11
+  - {state: q_last_11, read: "0", next: q_last_10, write: "0", move: R}
+  - {state: q_last_11, read: "1", next: q_last_11, write: "1", move: R}
+  - {state: q_last_11, read: "B", next: q_reject, write: "B", move: S}

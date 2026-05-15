@@ -267,4 +267,65 @@ def test_unary_to_binary_3():
     result = tm.run("111", max_steps=1000)
 
     assert result.accepted is True
+
+
+#def test for strnig_copy
+def test_string_copy_abba():
+    tm = SingleTapeTM.from_yaml("machines/string_copy.yaml")
+    result = tm.run("abba", max_steps=1000)
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "abba#abba"
+
+
+def test_string_copy_ab():
+    tm = SingleTapeTM.from_yaml("machines/string_copy.yaml")
+    result = tm.run("ab", max_steps=1000)
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "ab#ab"
+
+
+def test_string_copy_a():
+    tm = SingleTapeTM.from_yaml("machines/string_copy.yaml")
+    result = tm.run("a", max_steps=1000)
+
+    assert result.accepted is True
+    assert result.final_tape.strip("B") == "a#a"
+
+
+ #test for 4 divide machine
+def test_divisible_by_4_accept_100():
+    tm = SingleTapeTM.from_yaml("machines/student_choice_4Divide.yaml")
+    result = tm.run("100", max_steps=1000)
+
+    assert result.accepted is True
+
+
+def test_divisible_by_4_accept_1100():
+    tm = SingleTapeTM.from_yaml("machines/student_choice_4Divide.yaml")
+    result = tm.run("1100", max_steps=1000)
+
+    assert result.accepted is True
+
+
+def test_divisible_by_4_accept_1000():
+    tm = SingleTapeTM.from_yaml("machines/student_choice_4Divide.yaml")
+    result = tm.run("1000", max_steps=1000)
+
+    assert result.accepted is True
+
+
+def test_divisible_by_4_reject_101():
+    tm = SingleTapeTM.from_yaml("machines/student_choice_4Divide.yaml")
+    result = tm.run("101", max_steps=1000)
+
+    assert result.accepted is False
+
+
+def test_divisible_by_4_reject_11():
+    tm = SingleTapeTM.from_yaml("machines/student_choice_4Divide.yaml")
+    result = tm.run("11", max_steps=1000)
+
+    assert result.accepted is False   
   
