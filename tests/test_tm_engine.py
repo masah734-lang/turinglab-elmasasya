@@ -199,3 +199,37 @@ def test_even_a_reject_3():
 
     assert result.accepted is False
     assert result.reason == "no_transition"
+
+# Tests for the binary compare machine
+def test_binary_compare_accept():
+    tm = SingleTapeTM.from_yaml("machines/binary_compare.yaml")
+
+    result = tm.run("1#0")
+
+    assert result.accepted is True
+
+
+def test_binary_compare_reject():
+    tm = SingleTapeTM.from_yaml("machines/binary_compare.yaml")
+
+    result = tm.run("0#1")
+
+    assert result.accepted is False
+    assert result.reason == "reject"
+
+
+def test_binary_compare_accept_1011_0011():
+    tm = SingleTapeTM.from_yaml("machines/binary_compare.yaml")
+
+    result = tm.run("1011#0011")
+
+    assert result.accepted is True
+
+
+def test_binary_compare_reject_0011_1011():
+    tm = SingleTapeTM.from_yaml("machines/binary_compare.yaml")
+
+    result = tm.run("0011#1011")
+
+    assert result.accepted is False
+    assert result.reason == "reject"
