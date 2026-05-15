@@ -1,0 +1,83 @@
+#unary de solda başalayarak 1'leri X ile işaretler. Eğer (#) görürse, 
+# tüm unary sembollerin işaretlendiği anlamına gelir ve makine kabul durumuna geçer.
+
+name: "unary_to_binary"
+description: "Unary sayıyı binary karşılığına çevirir. Sonuç # işaretinden sonra tutulur."
+
+states:
+  - q_start
+  - q_init_zero
+  - q_return
+  - q_find_1
+  - q_go_to_end
+  - q_inc
+  - q_carry
+  - q_accept
+  - q_shift_right
+
+input_alphabet: ["1"]
+
+tape_alphabet: ["1", "0", "B", "X", "#"]
+
+blank: "B"
+
+start_state: q_start
+
+accept_states: [q_accept]
+
+reject_states: []
+
+transitions:
+  # 1) Unary girdinin sonuna git
+  - {state: q_start, read: "1", next: q_start, write: "1", move: R}
+
+  # 2) Sona # koy
+  - {state: q_start, read: "B", next: q_init_zero, write: "#", move: R}
+
+  # 3) # sonrasına binary sayaç başlangıcı olarak 0 yaz
+  - {state: q_init_zero, read: "B", next: q_return, write: "0", move: L}
+
+  # 4) En başa dön
+  - {state: q_return, read: "0", next: q_return, write: "0", move: L}
+  - {state: q_return, read: "1", next: q_return, write: "1", move: L}
+  - {state: q_return, read: "X", next: q_return, write: "X", move: L}
+  - {state: q_return, read: "#", next: q_return, write: "#", move: L}
+  - {state: q_return, read: "B", next: q_find_1, write: "B", move: R}
+
+  # 5) İşlenmemiş unary 1 ara
+  - {state: q_find_1, read: "X", next: q_find_1, write: "X", move: R}
+
+  # 1 bulunca X yap ve binary kısmına git
+  - {state: q_find_1, read: "1", next: q_go_to_end, write: "X", move: R}
+
+  # # görürse tüm unary işlendi, kabul et
+  - {state: q_find_1, read: "#", next: q_accept, write: "#", move: S}
+
+  # 6) Binary kısmının sonuna git
+  - {state: q_go_to_end, read: "1", next: q_go_to_end, write: "1", move: R}
+  - {state: q_go_to_end, read: "0", next: q_go_to_end, write: "0", move: R}
+  - {state: q_go_to_end, read: "X", next: q_go_to_end, write: "X", move: R}
+  - {state: q_go_to_end, read: "#", next: q_go_to_end, write: "#", move: R}
+  - {state: q_go_to_end, read: "B", next: q_inc, write: "B", move: L}
+
+  # 7) Binary increment
+  # 0 görürse 1 yap, artırma biter
+  - {state: q_inc, read: "0", next: q_return, write: "1", move: L}
+
+  # 1 görürse 0 yap, carry devam eder
+  - {state: q_inc, read: "1", next: q_carry, write: "0", move: L}
+
+  # Carry devam ederken 1 görürse 0 yap
+  - {state: q_carry, read: "1", next: q_carry, write: "0", move: L}
+
+  # Carry 0 görürse 1 yap ve biter
+  - {state: q_carry, read: "0", next: q_return, write: "1", move: L}
+
+  # Carry # işaretine gelirse, binary sayı 111 gibi tamamen taşmıştır
+  # # korunur, sağ tarafa yeni 1 eklemek için hareket edilir
+  - {state: q_carry, read: "#", next: q_shift_right, write: "#", move: R}
+    # Carry # gördüyse binary sayı 1, 11, 111 gibi tamamen taşmıştır.
+  # Sağ tarafa yeni baştaki 1 eklenir.
+  - {state: q_shift_right, read: "0", next: q_shift_right, write: "0", move: R}
+  - {state: q_shift_right, read: "1", next: q_shift_right, write: "1", move: R}
+  - {state: q_shift_right, read: "B", next: q_return, write: "1", move: L}

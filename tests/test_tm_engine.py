@@ -233,3 +233,38 @@ def test_binary_compare_reject_0011_1011():
 
     assert result.accepted is False
     assert result.reason == "reject"
+
+# Tests for the unary to binary machine
+def test_unary_to_binary():
+    tm = SingleTapeTM.from_yaml("machines/unary_to_binary.yaml")
+    # 3 (111) -> 11
+    result = tm.run("111")
+    assert result.accepted is True
+   
+def get_binary_part(tape):
+    binary_part = tape.split("#")[-1].strip("B")
+    return binary_part[::-1]
+
+
+def test_unary_to_binary_1():
+    tm = SingleTapeTM.from_yaml("machines/unary_to_binary.yaml")
+    result = tm.run("1", max_steps=1000)
+
+    assert result.accepted is True
+    assert get_binary_part(result.final_tape) == "1"
+
+
+def test_unary_to_binary_2():
+    tm = SingleTapeTM.from_yaml("machines/unary_to_binary.yaml")
+    result = tm.run("11", max_steps=1000)
+
+    assert result.accepted is True
+    assert get_binary_part(result.final_tape) == "10"
+
+
+def test_unary_to_binary_3():
+    tm = SingleTapeTM.from_yaml("machines/unary_to_binary.yaml")
+    result = tm.run("111", max_steps=1000)
+
+    assert result.accepted is True
+  
