@@ -137,7 +137,7 @@ def test_no_transition():
     assert result.reason == "no_transition"
 
 
-#tests for the unary increment machines
+#tests for the unary increment machines----------------------------------------------------------------------------------
 def test_unary_increment_1():
     tm = SingleTapeTM.from_yaml("machines/unary_increment.yaml")
 
@@ -166,7 +166,7 @@ def test_unary_increment_empty():
 
 
 
-# Tests for the even 'a' machine
+# Tests for the even 'a' machine---------------------------------------------------------------------------------
 def test_even_a_accept():
     tm = SingleTapeTM.from_yaml("machines/even_a.yaml")
 
@@ -200,7 +200,7 @@ def test_even_a_reject_3():
     assert result.accepted is False
     assert result.reason == "no_transition"
 
-# Tests for the binary compare machine
+# Tests for the binary compare machine---------------------------------------------------------------------------------
 def test_binary_compare_accept():
     tm = SingleTapeTM.from_yaml("machines/binary_compare.yaml")
 
@@ -234,7 +234,7 @@ def test_binary_compare_reject_0011_1011():
     assert result.accepted is False
     assert result.reason == "reject"
 
-# Tests for the unary to binary machine
+# Tests for the unary to binary machine-------------------------------------------------------------------------------
 def test_unary_to_binary():
     tm = SingleTapeTM.from_yaml("machines/unary_to_binary.yaml")
     # 3 (111) -> 11
@@ -269,7 +269,7 @@ def test_unary_to_binary_3():
     assert result.accepted is True
 
 
-#def test for strnig_copy
+#def test for strnig_copy----------------------------------------------------------------------------------------
 def test_string_copy_abba():
     tm = SingleTapeTM.from_yaml("machines/string_copy.yaml")
     result = tm.run("abba", max_steps=1000)
@@ -294,7 +294,7 @@ def test_string_copy_a():
     assert result.final_tape.strip("B") == "a#a"
 
 
- #test for 4 divide machine
+ #test for 4 divide machine-----------------------------------------------------------------------
 def test_divisible_by_4_accept_100():
     tm = SingleTapeTM.from_yaml("machines/student_choice_4Divide.yaml")
     result = tm.run("100", max_steps=1000)
